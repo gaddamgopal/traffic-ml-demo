@@ -15,11 +15,18 @@ def home():
 
 @app.route('/get_data')
 def get_data():
-    if data is not None:
+    try:
+        import pandas as pd
+        data = pd.read_csv('traffic.csv')
+
         row = data.sample().iloc[0]
+
         t1 = int(row[0])
         t2 = int(row[1])
-    else:
+
+    except Exception as e:
+        print("ERROR:", e)
+        import random
         t1 = random.randint(10, 100)
         t2 = random.randint(10, 100)
 
