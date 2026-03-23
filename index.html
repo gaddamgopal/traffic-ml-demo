@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Traffic ML Live</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<h1>🚦 ML Traffic Signal Optimization</h1>
+
+<div class="container">
+  <div class="card" id="road1">
+    <h2>Road 1</h2>
+    <div class="light red"></div>
+    <div class="light yellow"></div>
+    <div class="light green"></div>
+    <p>Traffic: <span id="t1">0</span></p>
+  </div>
+
+  <div class="card" id="road2">
+    <h2>Road 2</h2>
+    <div class="light red"></div>
+    <div class="light yellow"></div>
+    <div class="light green"></div>
+    <p>Traffic: <span id="t2">0</span></p>
+  </div>
+</div>
+
+<button onclick="start()">Start Live ML</button>
+
+<script>
+function setLight(id, color) {
+  let lights = document.querySelectorAll(`#${id} .light`);
+  lights.forEach(l => l.classList.remove('active'));
+  document.querySelector(`#${id} .${color}`).classList.add('active');
+}
+
+async function fetchData() {
+  let res = await fetch('/get_data');
+  return await res.json();
+}
+
+async function runCycle() {
+  let data = await fetchData();
+
+  document.getElementById('t1').innerText = data.road1;
+  document.getElementById('t2').innerText = data.road2;
+
+  if (data.road1 > data.road2) {
+    setLight('road1', 'green');
+    setLight('road2', 'red');
+
+    setTimeout(() => switchLights('road1','road2'), 4000);
+  } else {
+    setLight('road2', 'green');
+    setLight('road1', 'red');
+
+    setTimeout(() => switchLights('road2','road1'), 4000);
+  }
+}
+
+function switchLights(active, next) {
+  setLight(active, 'yellow');
+
+  setTimeout(() => {
+    setLight(active, 'red');
+    runCycle();
+  }, 2000);
+}
+
+function start() {
+  runCycle();
+}
+</script>
+
+</body>
+</html>
