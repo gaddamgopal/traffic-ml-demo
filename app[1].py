@@ -26,4 +26,4 @@ def get_data():
     return jsonify({'road1': t1, 'road2': t2})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
